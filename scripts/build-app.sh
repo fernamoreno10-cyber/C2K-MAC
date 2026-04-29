@@ -1,15 +1,18 @@
 #!/bin/bash
 set -e
+set -o pipefail
 
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 APP_NAME="KeyboardCleaner"
 APP_BUNDLE="$PROJECT_DIR/$APP_NAME.app"
 
+command -v swift >/dev/null 2>&1 || { echo "Error: swift not found in PATH"; exit 1; }
+
 echo "→ Building release binary..."
 cd "$PROJECT_DIR"
 swift build -c release
 
-BINARY=".build/release/$APP_NAME"
+BINARY="$PROJECT_DIR/.build/release/$APP_NAME"
 
 echo "→ Assembling .app bundle..."
 rm -rf "$APP_BUNDLE"
