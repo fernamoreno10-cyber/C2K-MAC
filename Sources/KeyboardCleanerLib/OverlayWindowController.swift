@@ -1,10 +1,12 @@
 import Cocoa
 import SwiftUI
 
+@MainActor
 class OverlayWindowController {
     private var window: NSWindow?
 
     func show(state: AppState, onDone: @escaping () -> Void) {
+        hide() // close any existing window before showing a new one
         guard let screen = NSScreen.main else { return }
 
         let hosting = NSHostingController(rootView: OverlayView(state: state, onDone: onDone))
