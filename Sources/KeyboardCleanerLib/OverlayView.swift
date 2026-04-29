@@ -63,7 +63,8 @@ struct OverlayView: View {
 
     private var progressWidth: CGFloat {
         guard state.duration > 0 else { return 0 }
-        return 320 * CGFloat(state.timeRemaining) / CGFloat(state.duration)
+        let raw = 320 * CGFloat(state.timeRemaining) / CGFloat(state.duration)
+        return min(320, max(0, raw))
     }
 }
 
