@@ -1,5 +1,5 @@
-import AppKit
 import Combine
+import Foundation
 
 public class AppState: ObservableObject {
     public static let shared = AppState()
@@ -24,6 +24,7 @@ public class AppState: ObservableObject {
     }
 
     public func startCleaning() {
+        guard !isLocked else { return }
         timeRemaining = duration
         isLocked = true
         timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
@@ -43,7 +44,6 @@ public class AppState: ObservableObject {
         timerCancellable = nil
         isLocked = false
         onUnlock?()
-        NSSound.beep()
     }
 
     public func formattedTime() -> String {
