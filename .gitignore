@@ -1,0 +1,6 @@
+.build/
+KeyboardCleaner.app/
+.superpowers/
+*.xcodeproj
+*.xcworkspace
+.DS_Store
