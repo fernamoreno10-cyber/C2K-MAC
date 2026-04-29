@@ -1,2 +1,8 @@
 import Cocoa
-// wired in Task 8
+import KeyboardCleanerLib
+
+let app = NSApplication.shared
+app.setActivationPolicy(.accessory)
+let delegate = AppDelegate()
+app.delegate = delegate
+app.run()
