@@ -1,4 +1,4 @@
-import Cocoa
+import ApplicationServices
 
 class KeyboardBlocker {
     private var eventTap: CFMachPort?
@@ -6,9 +6,12 @@ class KeyboardBlocker {
 
     var isRunning: Bool { eventTap != nil }
 
+    deinit { stop() }
+
     func start() -> Bool {
+        guard !isRunning else { return true }
         guard AXIsProcessTrusted() else {
-            let opts = [kAXTrustedCheckOptionPrompt.takeUnretainedValue(): true] as CFDictionary
+            let opts = [kAXTrustedCheckOptionPrompt.takeRetainedValue(): true] as CFDictionary
             AXIsProcessTrustedWithOptions(opts)
             return false
         }
