@@ -93,7 +93,7 @@ class StatusBarController {
         let name = locked ? "lock.fill" : "keyboard"
         statusItem.button?.image = NSImage(
             systemSymbolName: name,
-            accessibilityDescription: locked ? "Limpiando teclado" : "Keyboard Cleaner"
+            accessibilityDescription: locked ? "C2K - Limpiando" : "C2K"
         )
     }
 }

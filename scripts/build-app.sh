@@ -3,7 +3,8 @@ set -e
 set -o pipefail
 
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-APP_NAME="KeyboardCleaner"
+APP_NAME="C2K"
+BINARY_NAME="KeyboardCleaner"
 APP_BUNDLE="$PROJECT_DIR/$APP_NAME.app"
 
 command -v swift >/dev/null 2>&1 || { echo "Error: swift not found in PATH"; exit 1; }
@@ -12,14 +13,15 @@ echo "→ Building release binary..."
 cd "$PROJECT_DIR"
 swift build -c release
 
-BINARY="$PROJECT_DIR/.build/release/$APP_NAME"
+BINARY="$PROJECT_DIR/.build/release/$BINARY_NAME"
+[[ -f "$BINARY" ]] || { echo "Error: binary not found at $BINARY"; exit 1; }
 
 echo "→ Assembling .app bundle..."
 rm -rf "$APP_BUNDLE"
 mkdir -p "$APP_BUNDLE/Contents/MacOS"
 mkdir -p "$APP_BUNDLE/Contents/Resources"
 
-cp "$BINARY" "$APP_BUNDLE/Contents/MacOS/$APP_NAME"
+cp "$BINARY" "$APP_BUNDLE/Contents/MacOS/$BINARY_NAME"
 
 cat > "$APP_BUNDLE/Contents/Info.plist" << 'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
@@ -27,11 +29,11 @@ cat > "$APP_BUNDLE/Contents/Info.plist" << 'EOF'
 <plist version="1.0">
 <dict>
     <key>CFBundleName</key>
-    <string>KeyboardCleaner</string>
+    <string>C2K</string>
     <key>CFBundleDisplayName</key>
-    <string>Keyboard Cleaner</string>
+    <string>C2K</string>
     <key>CFBundleIdentifier</key>
-    <string>com.keyboardcleaner.app</string>
+    <string>com.c2k.app</string>
     <key>CFBundleVersion</key>
     <string>1.0</string>
     <key>CFBundleShortVersionString</key>
@@ -45,7 +47,7 @@ cat > "$APP_BUNDLE/Contents/Info.plist" << 'EOF'
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
     <key>NSAccessibilityUsageDescription</key>
-    <string>Keyboard Cleaner necesita acceso de Accesibilidad para bloquear el teclado mientras lo limpias.</string>
+    <string>C2K necesita acceso de Accesibilidad para bloquear el teclado mientras lo limpias.</string>
     <key>NSHighResolutionCapable</key>
     <true/>
 </dict>
