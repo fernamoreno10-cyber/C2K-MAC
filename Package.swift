@@ -4,6 +4,9 @@ import PackageDescription
 let package = Package(
     name: "KeyboardCleaner",
     platforms: [.macOS(.v13)],
+    dependencies: [
+        .package(url: "https://github.com/apple/swift-testing.git", from: "0.10.0")
+    ],
     targets: [
         .target(
             name: "KeyboardCleanerLib",
@@ -16,7 +19,10 @@ let package = Package(
         ),
         .testTarget(
             name: "KeyboardCleanerTests",
-            dependencies: ["KeyboardCleanerLib"],
+            dependencies: [
+                "KeyboardCleanerLib",
+                .product(name: "Testing", package: "swift-testing")
+            ],
             path: "Tests/KeyboardCleanerTests"
         )
     ]
