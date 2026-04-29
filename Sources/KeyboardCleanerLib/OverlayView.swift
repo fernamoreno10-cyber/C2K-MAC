@@ -5,66 +5,83 @@ struct OverlayView: View {
     let onDone: () -> Void
 
     var body: some View {
-        ZStack {
-            Color(hex: "#f5f5f7").ignoresSafeArea()
+        VStack(alignment: .leading, spacing: 14) {
 
-            VStack(spacing: 20) {
-                // Lock icon
+            // Header: icon + title + timer
+            HStack(spacing: 14) {
                 ZStack {
                     Circle()
-                        .fill(Color.white)
-                        .frame(width: 52, height: 52)
-                        .shadow(color: .black.opacity(0.08), radius: 6, y: 2)
-                    Image(systemName: "lock.fill")
+                        .fill(Color.white.opacity(0.12))
+                        .frame(width: 46, height: 46)
+                    Image(systemName: "keyboard")
                         .font(.system(size: 20, weight: .regular))
-                        .foregroundColor(Color(hex: "#1d1d1f"))
+                        .foregroundColor(.white)
                 }
 
-                Text("CLEAN MODE")
-                    .font(.system(size: 11, weight: .medium))
-                    .tracking(2)
-                    .foregroundColor(Color(hex: "#86868b"))
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Limpiando teclado")
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundColor(.white)
+                    Text(state.formattedTime())
+                        .font(.system(size: 13, weight: .regular).monospacedDigit())
+                        .foregroundColor(.white.opacity(0.55))
+                }
 
-                Text(state.formattedTime())
-                    .font(.system(size: 24, weight: .light).monospacedDigit())
-                    .foregroundColor(Color(hex: "#1d1d1f"))
+                Spacer()
+            }
 
-                // Progress bar
+            // Progress bar
+            GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 3)
-                        .fill(Color(hex: "#e0e0e0"))
-                        .frame(width: 320, height: 6)
-                    RoundedRectangle(cornerRadius: 3)
-                        .fill(Color(hex: "#1d1d1f"))
-                        .frame(width: progressWidth, height: 6)
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(Color.white.opacity(0.15))
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(Color.white.opacity(0.75))
+                        .frame(width: progressWidth(total: geo.size.width))
                         .animation(.linear(duration: 1), value: state.timeRemaining)
                 }
+            }
+            .frame(height: 4)
 
-                HStack(spacing: 24) {
-                    StatusDot(color: Color(hex: "#ff3b30"), label: "Teclado bloqueado")
-                    StatusDot(color: Color(hex: "#34c759"), label: "Mouse activo")
+            // Footer: status + button
+            HStack {
+                HStack(spacing: 6) {
+                    Circle()
+                        .fill(Color(hex: "#ff3b30"))
+                        .frame(width: 6, height: 6)
+                    Text("TECLADO BLOQUEADO")
+                        .font(.system(size: 10, weight: .medium))
+                        .tracking(1)
+                        .foregroundColor(.white.opacity(0.4))
                 }
+
+                Spacer()
 
                 Button(action: onDone) {
                     Text("Terminado")
-                        .font(.system(size: 11))
-                        .foregroundColor(Color(hex: "#86868b"))
-                        .padding(.horizontal, 22)
-                        .padding(.vertical, 7)
-                        .background(Color.white)
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(.white.opacity(0.8))
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 5)
+                        .background(Color.white.opacity(0.15))
                         .clipShape(Capsule())
-                        .overlay(Capsule().stroke(Color(hex: "#d0d0d0"), lineWidth: 1))
                 }
                 .buttonStyle(.plain)
-                .padding(.top, 8)
             }
         }
+        .padding(20)
+        .frame(width: 340)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color(red: 0.10, green: 0.10, blue: 0.12))
+                .shadow(color: .black.opacity(0.45), radius: 24, y: 8)
+        )
     }
 
-    private var progressWidth: CGFloat {
+    private func progressWidth(total: CGFloat) -> CGFloat {
         guard state.duration > 0 else { return 0 }
-        let raw = 320 * CGFloat(state.timeRemaining) / CGFloat(state.duration)
-        return min(320, max(0, raw))
+        let raw = total * CGFloat(state.timeRemaining) / CGFloat(state.duration)
+        return min(total, max(0, raw))
     }
 }
 
@@ -77,7 +94,7 @@ struct StatusDot: View {
             Circle().fill(color).frame(width: 6, height: 6)
             Text(label)
                 .font(.system(size: 11))
-                .foregroundColor(Color(hex: "#86868b"))
+                .foregroundColor(.white.opacity(0.45))
         }
     }
 }
