@@ -82,14 +82,18 @@ class StatusBarController {
             settingsWindow = panel
         }
         settingsWindow?.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true)
+        if #available(macOS 14.0, *) {
+            NSApp.activate()
+        } else {
+            NSApp.activate(ignoringOtherApps: true)
+        }
     }
 
     private func updateIcon(locked: Bool) {
         let name = locked ? "lock.fill" : "keyboard"
         statusItem.button?.image = NSImage(
             systemSymbolName: name,
-            accessibilityDescription: locked ? "Limpiando" : "Keyboard Cleaner"
+            accessibilityDescription: locked ? "Limpiando teclado" : "Keyboard Cleaner"
         )
     }
 }
