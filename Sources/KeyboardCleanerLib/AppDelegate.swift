@@ -1,10 +1,11 @@
 import Cocoa
 
 public class AppDelegate: NSObject, NSApplicationDelegate {
-    private let statusBarController = MainActor.assumeIsolated { StatusBarController() }
+    @MainActor private var statusBarController: StatusBarController!
 
     @MainActor
     public func applicationDidFinishLaunching(_ notification: Notification) {
+        statusBarController = StatusBarController()
         statusBarController.setup()
     }
 
