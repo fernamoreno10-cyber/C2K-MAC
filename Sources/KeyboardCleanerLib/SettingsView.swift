@@ -5,7 +5,7 @@ struct SettingsView: View {
     let onDone: () -> Void
 
     init(onDone: @escaping () -> Void) {
-        _minutes = State(initialValue: Double(AppState.shared.duration / 60))
+        _minutes = State(initialValue: Double(AppState.shared.duration) / 60.0)
         self.onDone = onDone
     }
 
@@ -18,8 +18,8 @@ struct SettingsView: View {
             VStack(spacing: 8) {
                 Slider(value: $minutes, in: 1...10, step: 1)
                     .tint(Color(hex: "#1d1d1f"))
-                    .onChange(of: minutes) { newValue in
-                        AppState.shared.duration = Int(newValue) * 60
+                    .onChange(of: minutes) {
+                        AppState.shared.duration = Int(minutes) * 60
                     }
                 Text("\(Int(minutes)) min")
                     .font(.system(size: 12))
