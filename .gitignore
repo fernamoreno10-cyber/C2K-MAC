@@ -1,6 +1,8 @@
 .build/
 C2K.app/
+KeyboardCleaner.app/
 .superpowers/
+.claude/
 *.xcodeproj
 *.xcworkspace
 .DS_Store
