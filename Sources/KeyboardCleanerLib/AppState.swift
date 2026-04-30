@@ -23,9 +23,12 @@ public class AppState: ObservableObject {
         set { defaults.set(newValue, forKey: "cleanDuration") }
     }
 
-    public func startCleaning() {
+    @Published public var isEmergency: Bool = false
+
+    public func startCleaning(overrideDuration: Int? = nil) {
         guard !isLocked else { return }
-        timeRemaining = duration
+        isEmergency = overrideDuration != nil
+        timeRemaining = overrideDuration ?? duration
         isLocked = true
         timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
@@ -43,6 +46,7 @@ public class AppState: ObservableObject {
         timerCancellable?.cancel()
         timerCancellable = nil
         isLocked = false
+        isEmergency = false
         onUnlock?()
     }
 

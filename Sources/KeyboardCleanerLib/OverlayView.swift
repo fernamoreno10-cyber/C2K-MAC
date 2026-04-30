@@ -19,7 +19,7 @@ struct OverlayView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("Limpiando teclado")
+                    Text(state.isEmergency ? "⚡ Emergencia" : "Limpiando teclado")
                         .font(.system(size: 15, weight: .bold))
                         .foregroundColor(.white)
                     Text(state.formattedTime())

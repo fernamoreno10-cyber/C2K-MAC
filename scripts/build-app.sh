@@ -50,6 +50,17 @@ cat > "$APP_BUNDLE/Contents/Info.plist" << 'EOF'
     <string>C2K necesita acceso de Accesibilidad para bloquear el teclado mientras lo limpias.</string>
     <key>NSHighResolutionCapable</key>
     <true/>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>c2k</string>
+            </array>
+            <key>CFBundleURLName</key>
+            <string>com.c2k.app</string>
+        </dict>
+    </array>
 </dict>
 </plist>
 EOF

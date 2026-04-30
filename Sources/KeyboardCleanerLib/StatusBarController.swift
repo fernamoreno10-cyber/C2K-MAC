@@ -8,12 +8,16 @@ class StatusBarController {
     private let keyboardBlocker = KeyboardBlocker()
     private let overlayController = OverlayWindowController()
     private var settingsWindow: NSWindow?
+    private var globalHotkeyMonitor: Any?
 
     func setup() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         updateIcon(locked: false)
         buildMenu()
+        registerGlobalHotkey()
     }
+
+    // MARK: - Menu
 
     private func buildMenu() {
         let menu = NSMenu()
@@ -25,6 +29,14 @@ class StatusBarController {
         )
         cleanItem.target = self
         menu.addItem(cleanItem)
+
+        let emergencyItem = NSMenuItem(
+            title: "⚡ Emergencia (30 seg)  ⌘⌥K",
+            action: #selector(startEmergencyFromMenu),
+            keyEquivalent: ""
+        )
+        emergencyItem.target = self
+        menu.addItem(emergencyItem)
 
         let settingsItem = NSMenuItem(
             title: "Configurar...",
@@ -45,7 +57,24 @@ class StatusBarController {
         statusItem.menu = menu
     }
 
+    // MARK: - Cleaning
+
+    /// Limpieza normal con duración configurada
     @objc private func startCleaning() {
+        beginCleaning()
+    }
+
+    /// Modo emergencia desde menú
+    @objc private func startEmergencyFromMenu() {
+        beginCleaning(overrideDuration: 30)
+    }
+
+    /// Modo emergencia (llamado desde hotkey o URL scheme)
+    func startEmergencyCleaning() {
+        beginCleaning(overrideDuration: 30)
+    }
+
+    private func beginCleaning(overrideDuration: Int? = nil) {
         guard !appState.isLocked else { return }
         guard keyboardBlocker.start() else { return }
 
@@ -56,12 +85,27 @@ class StatusBarController {
             NSSound.beep()
         }
 
-        appState.startCleaning()
+        appState.startCleaning(overrideDuration: overrideDuration)
         overlayController.show(state: appState) { [weak self] in
             self?.appState.stopCleaning()
         }
         updateIcon(locked: true)
     }
+
+    // MARK: - Global Hotkey (⌘⌥K)
+
+    private func registerGlobalHotkey() {
+        globalHotkeyMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+            // keyCode 40 = 'k' en QWERTY
+            guard flags == [.command, .option], event.keyCode == 40 else { return }
+            DispatchQueue.main.async {
+                self?.startEmergencyCleaning()
+            }
+        }
+    }
+
+    // MARK: - Settings
 
     @objc private func openSettings() {
         if settingsWindow == nil {
@@ -89,11 +133,19 @@ class StatusBarController {
         }
     }
 
+    // MARK: - Icon
+
     private func updateIcon(locked: Bool) {
         let name = locked ? "lock.fill" : "keyboard"
         statusItem.button?.image = NSImage(
             systemSymbolName: name,
             accessibilityDescription: locked ? "C2K - Limpiando" : "C2K"
         )
+    }
+
+    deinit {
+        if let monitor = globalHotkeyMonitor {
+            NSEvent.removeMonitor(monitor)
+        }
     }
 }
